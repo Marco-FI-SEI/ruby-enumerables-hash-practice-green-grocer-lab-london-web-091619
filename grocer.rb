@@ -55,6 +55,7 @@ def total_cart(cart)
     cart_total += item_info[:price]
   end
   cart_total -= 0.1 * cart_total if cart_total > 100
+  cart_total
 end
 
 # checkout cart
