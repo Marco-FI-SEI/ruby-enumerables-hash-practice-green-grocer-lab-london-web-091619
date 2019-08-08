@@ -19,24 +19,15 @@ end
 
 def apply_coupons(cart, coupons)
   return cart if coupons.count < 1
-  discounted_cart = {}
-  cons_coupons = consolidate_coupons(coupons)
-  cart.each_key do |key|
-    discounted_cart[key] = cart.delete(key) if !cons_coupons.find { |coupon| coupon[:item] == key}
-    cons_coupons.each do |coupon|
-      if key == coupon[:item]
-        discounted_name = "#{key} W/COUPON"
-        coupon_value = coupon[:cost] / coupon[:num]
-        if coupon[:num] >= cart[key][:count]
-          discounted_cart[discounted_name] = {:price => coupon_value, :clearance => cart[key][:clearance], :count => cart[key][:count]}
-          cart[key][:count] = 0
-          discounted_cart[key] = cart[key]
-        elsif coupon[:num] < cart[key][:count]
-          discounted_cart[discounted_name] = {:price => coupon_value, :clearance => cart[key][:clearance], :count => coupon[:num]}
-          cart[key][:count] -= coupon[:num]
-          discounted_cart[key] = cart[key]
-        end
-      end
+  discounted_cart = cart.dup
+  coupons.each do |coupon|
+    key = coupon[:item]
+    coupon_count = coupon[:num]
+    coupon_value = coupon[:cost] / coupon[:num]
+    discounted_name = "#{key} W/COUPON"
+    if discounted_cart.find(key) && discounted_cart[key][:count] >= coupon_count
+      discounted_cart[key][:count] -= coupon_count
+      discounted_cart[discounted_name] = {:price => coupon_value, :clearance => discounted_cart[key][:clearance], :count => coupon_count}
     end
   end
   discounted_cart
