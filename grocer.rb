@@ -25,11 +25,14 @@ def apply_coupons(cart, coupons)
     coupon_count = coupon[:num]
     coupon_value = coupon[:cost] / coupon[:num]
     discounted_name = "#{key} W/COUPON"
+    # if coupon applies to item in cart and there are enough items to qualify
     if discounted_cart.key?(key) && discounted_cart[key][:count] >= coupon_count
       discounted_cart[key][:count] -= coupon_count
-      discounted_cart[discounted_name] ? discounted_cart[discounted_name][:count] += coupon_count : discounted_cart[discounted_name][:count] = coupon_count
-      discounted_cart[discounted_name][:price] = coupon_value
-      discounted_cart[discounted_name][:clearance] = discounted_cart[key][:clearance]
+      if discounted_cart.key?(discounted_name)
+        discounted_cart[discounted_name][:count] += coupon_count
+      else
+        discounted_cart[discounted_name] = {:price => coupon_value, :clearance => discounted_cart[key][:clearance], :count => coupon_count}
+      end
     end
   end
   discounted_cart
