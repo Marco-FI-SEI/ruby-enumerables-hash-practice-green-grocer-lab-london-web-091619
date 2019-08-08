@@ -27,7 +27,9 @@ def apply_coupons(cart, coupons)
     discounted_name = "#{key} W/COUPON"
     if discounted_cart.key?(key) && discounted_cart[key][:count] >= coupon_count
       discounted_cart[key][:count] -= coupon_count
-      discounted_cart[discounted_name] = {:price => coupon_value, :clearance => discounted_cart[key][:clearance], :count => coupon_count}
+      discounted_cart[discounted_name] ? discounted_cart[discounted_name][:count] += coupon_count : discounted_cart[discounted_name][:count] = coupon_count
+      discounted_cart[discounted_name][:price] = coupon_value
+      discounted_cart[discounted_name][:clearance] = discounted_cart[key][:clearance]
     end
   end
   discounted_cart
